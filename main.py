@@ -90,3 +90,4 @@ print("The area of your wall is " + str(round(wall1.area)) + " meters squared.")
 print("You will need between " + str(round(wall1.min_liters_of_paint, 2)) + " and " + str(
     round(wall1.max_liters_of_paint, 2)) + " liters of paint to paint your wall once.")
 
+print("1")
