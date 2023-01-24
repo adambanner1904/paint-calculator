@@ -60,6 +60,10 @@ class Room:
     def __init__(self, name, num_of_walls):
         self.name = name
         self.num_of_walls = num_of_walls
+        self.walls = []
+
+    def add_wall(self, wall):
+        self.walls.append(wall)
 
 
 class House:
@@ -96,12 +100,23 @@ def query_and_add_room(house):
     house.add_room(Room(name_of_room, num_of_walls))
 
 
-def create_wall():
-    print("What is the height and width of your wall")
-    height = input("Height")
-    width = input("Width")
-    wall = Wall(height, width)
-    return wall
+def query_wall():
+
+    while True:
+        try:
+            height = float(input("What is the height of your wall"))
+            break
+        except ValueError:
+            print("Please enter a number as the height of your wall.")
+
+    while True:
+        try:
+            width = float(input("What is the width of your wall"))
+            break
+        except ValueError:
+            print("Please enter a number as the width of your wall.")
+
+    return Wall(height, width)
 
 def query_yes_no(question, default = "yes"):
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n":False}
@@ -123,19 +138,28 @@ def query_yes_no(question, default = "yes"):
 
 
 def query_obstruction():
-    while True:
-        try:
-            obstruction_yes_no = bool(input("Do you have a window or door (1 for yes, 0 for no)"))
-            break
-        except ValueError:
-            print("Please enter a 1 for yes and a 0 for no.")
-    return obstruction_yes_no
+    # Returns true if there is a obstruction on that wall and false if there isnt
+    question = "Do you have a space in your wall like a window or door? " \
+               "Press enter to answer yes by default"
+    answer = query_yes_no(question)
+    return answer
 
-query_obstruction()
+
 def query_shape_of_obstruction():
-    shape_of_obstruction = input("Is your obstruction square or circular(1 for square, 0 for circular)")
-    return shape_of_obstruction
+    # Returns 0 for rectangle and 1 for circle
+    question = "What shape is your obstruction?"
+    prompt = [" [Rectangle/Circle]"]
+    valid = {"rectangle": 0, "circle": 1}
 
+    while True:
+        choice = input(question + prompt).lower()
+        if choice in valid:
+            return valid[choice]
+        else:
+            print("Please choose one of the shapes.")
+
+def query_obstruction_size():
+    pass
 
 def create_rectangular_obstruction(wall):
     obstruction_height = input("What is the height of your obstruction")
