@@ -17,17 +17,14 @@ for i in range(house.num_of_rooms):
         # If there is an obstruction then do this
         if query_obstruction():
             shape = query_shape_of_obstruction()
-            if shape == 0:
-                obstruction = query_obstruction_size()
-                house.rooms[i].walls[j]
+
+            parameters = query_obstruction_size(shape)
+
+            house.rooms[i].walls[j].add_space(parameters)
         # If no obstruction then carry on
 
+house.get_total_area()
+price, volume = query_paint_price()
+paint = Paint(price, volume)
 
-
-
-
-
-# print("The area of your wall is " + str(round(wall1.area)) + " meters squared.")
-#
-# print("You will need between " + str(round(wall1.min_liters_of_paint, 2)) + " and " + str(
-#     round(wall1.max_liters_of_paint, 2)) + " liters of paint to paint your wall once.")
+print(f'Total area is {House.total_area}')

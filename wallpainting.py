@@ -1,79 +1,8 @@
-import math
-
-
-# Define a general space could be wall, window or door
-class RectangularSpace:
-
-    # Initialise the space with a height and width
-    def __init__(self, height, width):
-        self.height = float(height)
-        self.width = float(width)
-        self.area = 0
-        self.get_area()
-
-    # Calculates the area of the space
-    def get_area(self):
-        self.area = self.height * self.width
-
-
-class CircularSpace:
-
-    # Initialise the space with a height and width
-    def __init__(self, radius):
-        self.radius = float(radius)
-
-    # Calculates the area of the space
-    def get_area(self):
-        self.area = self.radius * math.pi
-
-
-# A wall is a more specific definition of a space
-# but inherits from a general space
-class Wall(RectangularSpace):
-
-    # Initialise with the Space initialisation
-    def __init__(self, height, width):
-        RectangularSpace.__init__(self, height, width)
-
-    # Function to be used when adding a space to
-    # recalculate the area
-    def recalculate_area(self, space):
-        self.area -= space.area
-
-    # A function to add a space (window or door)
-    # to the wall and will automatically subtract
-    # the area
-    def add_space(self, space):
-        space.get_area()
-        self.recalculate_area(space)
-
-    # Works out the minimum and maximum amount of paint
-    # required. The two values are the liters of paint
-    # needed per meter squared
-    def how_much_paint(self):
-        self.min_liters_of_paint = 0.07143 * self.area
-        self.max_liters_of_paint = 0.08333 * self.area
-
-
-class Room:
-
-    def __init__(self, name, num_of_walls):
-        self.name = name
-        self.num_of_walls = num_of_walls
-        self.walls = []
-
-    def add_wall(self, wall):
-        self.walls.append(wall)
-
-
-class House:
-
-    def __init__(self, num_of_rooms):
-        self.num_of_rooms = num_of_rooms
-        self.rooms = []
-
-    def add_room(self, room):
-        self.rooms.append(room)
+from House import House
+from Room import Room
+from CircularSpace import CircularSpace
+from RectangularSpace import RectangularSpace
+from Wall import Wall
 
 
 def query_num_rooms_in_house():
@@ -104,19 +33,20 @@ def query_wall():
 
     while True:
         try:
-            height = float(input("What is the height of your wall"))
+            height = float(input("What is the height of one of the walls?"))
             break
         except ValueError:
             print("Please enter a number as the height of your wall.")
 
     while True:
         try:
-            width = float(input("What is the width of your wall"))
+            width = float(input("What is the width of that wall"))
             break
         except ValueError:
             print("Please enter a number as the width of your wall.")
 
     return Wall(height, width)
+
 
 def query_yes_no(question, default = "yes"):
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n":False}
@@ -148,7 +78,7 @@ def query_obstruction():
 def query_shape_of_obstruction():
     # Returns 0 for rectangle and 1 for circle
     question = "What shape is your obstruction?"
-    prompt = [" [Rectangle/Circle]"]
+    prompt = " [Rectangle/Circle]"
     valid = {"rectangle": 0, "circle": 1}
 
     while True:
@@ -158,19 +88,73 @@ def query_shape_of_obstruction():
         else:
             print("Please choose one of the shapes.")
 
-def query_obstruction_size():
-    pass
 
-def create_rectangular_obstruction(wall):
-    obstruction_height = input("What is the height of your obstruction")
-    obstruction_width = input("What is the width of your obstruction")
-    wall.add_space(RectangularSpace(obstruction_height, obstruction_width))
+def query_obstruction_size(shape):
+
+    if shape == 0:
+        while True:
+            try:
+                height = float(input("What is the height of that obstruction"))
+                break
+            except ValueError:
+                print("Please enter a number as the height of your obstruction.")
+        while True:
+            try:
+                width = float(input("What is the width of that obstruction"))
+                break
+            except ValueError:
+                print("Please enter a number as the width of your obstruction.")
+        return height, width
+
+    if shape == 1:
+        while True:
+            try:
+                radius = float(input("What is the radius of that obstruction"))
+                break
+            except ValueError:
+                print("Please enter a number as the radius of your obstruction.")
+        return radius
 
 
-def create_circle_obstruction(wall):
-    radius = input("What is the radius of the obstruction")
-    wall.add_space(CircularSpace(radius))
+def query_paint_price():
+    if query_yes_no("Do you know how much your paint will cost? [Y/n]"
+                    "(This program is more accurate if you can tell us the "
+                    "exact amount your paint will cost.)"):
+        while True:
+            try:
+                price = float(input("How much will it cost? (Please write it in the format '00.00'"))
+                break
+            except ValueError:
+                print("Please enter a number as the amount")
 
+        question = "What volume does the paint come in for that price?"
+        prompt = " [1l, 2.5l, 5l, 10l] "
+        valid = {"1": 1, "2.5": 2.5, '5': 5, '10': 10,
+                 "1l": 1, "2.5l": 2.5, '5l': 5, '10l': 10,
+                 "1 liter": 1, "2.5 liters": 2.5, '5 liters': 5, '10 liters': 10,
+                 "1 litre": 1, "2.5 litres": 2.5, '5 litres': 5, '10 litres': 10}
 
+        while True:
+            choice = input(question + prompt).lower()
+            if choice in valid:
+                return valid[choice]
+            else:
+                print("Please choose one the volumes listed")
+        return price, volume
+    else:
+        return 23, 2.5
 
+def query_paint_brand():
+    question = "What brand paint would you like to use? If your brand is none of these then enter " \
+               "['n'/'none']"
+    prompt = " [c = Crown/t = Tikkurila/d = Dulux/a = Armstead/m = Macpherson] "
+    valid = {"c": 'Crown', "crown": "Crown", 't': 'Tikkurila', 'tikkurila': 'Tikkurila',
+             'd': 'Dulux', 'dulux': 'Dulux', 'a': 'Armstead', 'armstead': 'Armstead',
+             'm': 'Macpherson', 'macpherson': 'Macpherson', 'n': 'Average', 'none': 'Average'}
 
+    while True:
+        choice = input(question + prompt).lower()
+        if choice in valid:
+            return valid[choice]
+        else:
+            print("Please choose one of the brands listed or enter 'n' for none of those listed.")
